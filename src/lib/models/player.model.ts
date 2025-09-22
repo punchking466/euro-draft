@@ -4,6 +4,7 @@ const PlayerSchema = new mongoose.Schema(
   {
     name: String,
     position: String,
+    backNumber: Number,
     score: Number,
     userType: { type: mongoose.Schema.Types.ObjectId, ref: "UserType" },
     birthYear: Number,

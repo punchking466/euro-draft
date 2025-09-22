@@ -8,10 +8,12 @@ import {
   PlayerSchemaWithId,
 } from "@/lib/validation/player-schema";
 import { extractFirstErrors } from "@/utils/zodErrorHelper";
+import { UserType } from "@/lib/models/user-type.model";
+import { Types } from "mongoose";
 
 interface FormState {
   value: Record<string, string> | undefined;
-  errors: Record<string, string>;
+  errors: Partial<Record<string, string>>;
 }
 
 export async function registerPlayer(prevState: FormState, formData: FormData) {
@@ -25,6 +27,8 @@ export async function registerPlayer(prevState: FormState, formData: FormData) {
       value: {
         name: formObj["name"] as string,
         position: formObj["position"] as string,
+        backNumber: formObj["backNumber"] as string,
+        userType: formObj["userType"] as string,
         score: formObj["score"] as string,
         birthYear: formObj["birthYear"] as string,
         lastPlayed: formObj["birthYear"] as string,
@@ -32,16 +36,37 @@ export async function registerPlayer(prevState: FormState, formData: FormData) {
       errors: extractFirstErrors(errors),
     };
   }
-  const { name, position, score, birthYear, lastPlayed } = result.data;
-  await connectDB();
+  const { name, position, backNumber, userType, score, birthYear, lastPlayed } =
+    result.data;
+  try {
+    await connectDB();
 
-  await Player.create({
-    name,
-    position,
-    score,
-    birthYear,
-    lastPlayed,
-  });
+    const foundUserType = await UserType.findOne({
+      code: Number(userType),
+    })
+      .lean<{ _id: Types.ObjectId }>()
+      .exec();
+
+    if (!foundUserType) throw new Error("존재하지 않는 유형입니다.");
+
+    await Player.create({
+      name,
+      position,
+      backNumber,
+      userType: foundUserType._id,
+      score,
+      birthYear,
+      lastPlayed,
+    });
+  } catch (error) {
+    console.error("Failed to create player:", error);
+    return {
+      value: undefined,
+      errors: {
+        global: "예상치 못한 오류가 발생하였습니다.",
+      },
+    };
+  }
   revalidatePath("/register");
 
   return {
@@ -53,7 +78,6 @@ export async function registerPlayer(prevState: FormState, formData: FormData) {
 export async function upsertPlayer(prevState: FormState, formData: FormData) {
   const formObj = Object.fromEntries(formData.entries());
   const result = PlayerSchemaWithId.safeParse(formObj);
-  console.log(result);
   if (!result.success) {
     const errors = result.error.flatten().fieldErrors;
     return {
@@ -61,6 +85,7 @@ export async function upsertPlayer(prevState: FormState, formData: FormData) {
         id: formObj["id"] as string,
         name: formObj["name"] as string,
         position: formObj["position"] as string,
+        backNumber: formObj["backNumber"] as string,
         score: formObj["score"] as string,
         birthYear: formObj["birthYear"] as string,
         lastPlayed: formObj["birthYear"] as string,
@@ -68,16 +93,37 @@ export async function upsertPlayer(prevState: FormState, formData: FormData) {
       errors: extractFirstErrors(errors),
     };
   }
-  const { name, position, score, birthYear, lastPlayed } = result.data;
-  await connectDB();
 
-  await Player.findByIdAndUpdate(formObj.id, {
-    name,
-    position,
-    score,
-    birthYear,
-    lastPlayed,
-  });
+  const { name, position, backNumber, userType, score, birthYear, lastPlayed } =
+    result.data;
+  try {
+    await connectDB();
+    const foundUserType = await UserType.findOne({
+      code: Number(userType),
+    })
+      .lean<{ _id: Types.ObjectId }>()
+      .exec();
+    if (!foundUserType) throw new Error("존재하지 않는 유형입니다.");
+
+    await Player.findByIdAndUpdate(formObj.id, {
+      name,
+      position,
+      backNumber,
+      userType: foundUserType._id,
+      score,
+      birthYear,
+      lastPlayed,
+    });
+  } catch (error) {
+    console.error("Failed to create player:", error);
+    return {
+      value: undefined,
+      errors: {
+        global: "예상치 못한 오류가 발생하였습니다.",
+      },
+    };
+  }
+
   revalidatePath("/register");
 
   return {

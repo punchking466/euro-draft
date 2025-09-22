@@ -5,23 +5,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "./ui/badge";
+import { Badge } from "../ui/badge";
 import { useModal } from "@/contexts/ModalContext";
 import { useTransition, useMemo } from "react";
 import { toast } from "sonner";
 import { deletePlayer } from "@/actions/player";
 import { useLoading } from "@/contexts/LoadingContext";
+import { PlayerDto } from "@/types/Player.type";
 
-interface User {
-  id: string;
-  name: string;
-  position: string;
-  score: number;
-  birthYear: number;
-  lastPlayed: Date | undefined;
-}
-
-export function SectionCard({ user }: { user: User }) {
+export function SectionCard({ user }: { user: PlayerDto }) {
   const { showModal, hideModal } = useModal();
   const { showLoading, hideLoading } = useLoading();
   const [isPending, startTransition] = useTransition();
@@ -80,7 +72,7 @@ export function SectionCard({ user }: { user: User }) {
         </CardTitle>
         <CardAction>
           <Badge variant="secondary" className="mr-2">
-            회원
+            {user.userType?.label}
           </Badge>
           <Badge
             variant="destructive"
@@ -101,11 +93,15 @@ export function SectionCard({ user }: { user: User }) {
           {user.position}
         </div>
         <div>
+          <span className="text-foreground font-medium">등번호:</span>{" "}
+          {user.backNumber || 0}
+        </div>
+        <div>
           <span className="text-foreground font-medium">점수:</span>{" "}
           {user.score}
         </div>
         <div>
-          <span className="text-foreground font-medium">출생년도:</span>{" "}
+          <span className="text-foreground font-medium">출생연도:</span>{" "}
           {user.birthYear} ({age}세)
         </div>
         <div>

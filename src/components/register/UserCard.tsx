@@ -14,25 +14,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { upsertPlayer } from "@/actions/player";
-import { SectionCard } from "../section-cards";
+import { SectionCard } from "./section-cards";
 import { CalendarPop } from "../calendar/CalendarPop";
-import { SelectPosition } from "./SelectPosition";
 import { useActionState, useEffect, useState } from "react";
 import { FullscreenLoader } from "../common/Loader/FullscreenLoader";
 import { toast } from "sonner";
-
-interface User {
-  id: string;
-  name: string;
-  position: string;
-  score: number;
-  birthYear: number;
-  lastPlayed: Date | undefined;
-}
+import { PlayerDto } from "@/types/Player.type";
+import { SelectDropdown } from "./SelectDropdown";
 
 interface FormState {
   value: Record<string, string> | undefined;
-  errors: Record<string, string>;
+  errors: Partial<Record<string, string>>;
 }
 
 const initialState: FormState = {
@@ -40,7 +32,13 @@ const initialState: FormState = {
   errors: {},
 };
 
-export function UserCard({ user }: { user: User }) {
+export function UserCard({
+  user,
+  userTypes,
+}: {
+  user: PlayerDto;
+  userTypes: { value: string; label: string }[];
+}) {
   const [state, formAction, isPending] = useActionState(
     upsertPlayer,
     initialState,
@@ -49,6 +47,7 @@ export function UserCard({ user }: { user: User }) {
   const [open, setOpen] = useState(false);
 
   const [positionValue, setPositionValue] = useState(user.position ?? "");
+  const [userTypeValue, setUserTypeValue] = useState("");
   const [lastPlayed, setLastPlayed] = useState<Date | undefined>(
     user.lastPlayed ?? undefined,
   );
@@ -77,8 +76,8 @@ export function UserCard({ user }: { user: User }) {
       </SheetTrigger>
       <SheetContent className="overflow-auto">
         <SheetHeader>
-          <SheetTitle>회원 등록</SheetTitle>
-          <SheetDescription>회원을 등록하거나 수정해보세요</SheetDescription>
+          <SheetTitle>회원 수정</SheetTitle>
+          <SheetDescription>회원 수정</SheetDescription>
         </SheetHeader>
 
         <form
@@ -89,9 +88,6 @@ export function UserCard({ user }: { user: User }) {
               state &&
               (!state.errors || Object.keys(state.errors).length === 0)
             ) {
-              console.log(state);
-              setPositionValue("");
-              setLastPlayed(undefined);
               setOpen(false);
             }
           }}
@@ -122,10 +118,56 @@ export function UserCard({ user }: { user: User }) {
 
           <div className="grid gap-2">
             <Label htmlFor="position">포지션</Label>
-            <SelectPosition
-              positionValue={positionValue}
+            <SelectDropdown
+              inputName="position"
+              selectedValue={positionValue}
+              selectValues={[
+                { label: "PG", value: "PG" },
+                { label: "SG", value: "SG" },
+                { label: "SF", value: "SF" },
+                { label: "PF", value: "PF" },
+                { label: "C", value: "C" },
+              ]}
+              placeholder="포지션을 선택해 주세요"
               isError={!!state.errors?.position}
               onChange={(val: string) => setPositionValue(val)}
+            />
+
+            {state && state.errors?.position && (
+              <p className="text-sm text-red-500">{state.errors.position}</p>
+            )}
+          </div>
+
+          <div className="grid gap-2">
+            <Label htmlFor="name">등번호</Label>
+            <Input
+              id="backNumber"
+              name="backNumber"
+              type="number"
+              inputMode="numeric"
+              defaultValue={state.value?.backNumber ?? user.backNumber}
+              className={
+                state && state.errors?.name
+                  ? "border-red-500 ring-1 ring-red-500"
+                  : ""
+              }
+            />
+            {state && state.errors?.backNumber && (
+              <p className="text-sm text-red-500">
+                {state.errors["backNumber"]}
+              </p>
+            )}
+          </div>
+
+          <div className="grid gap-2">
+            <Label htmlFor="userType">회원유형</Label>
+            <SelectDropdown
+              inputName="userType"
+              selectedValue={(userTypeValue || `${user.userType?.code}`) ?? ""}
+              selectValues={userTypes}
+              placeholder="회원 유형을 선택해 주세요"
+              isError={!!state.errors?.position}
+              onChange={(val: string) => setUserTypeValue(val)}
             />
 
             {state && state.errors?.position && (
@@ -150,7 +192,7 @@ export function UserCard({ user }: { user: User }) {
             )}
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="birthYear">출생년도</Label>
+            <Label htmlFor="birthYear">출생연도</Label>
             <Input
               id="birthYear"
               name="birthYear"
@@ -179,17 +221,7 @@ export function UserCard({ user }: { user: User }) {
           </div>
 
           <SheetFooter className="mt-4 flex justify-between">
-            <Button name="intent" value="save" type="submit">
-              저장
-            </Button>
-            <Button
-              name="intent"
-              value="delete"
-              type="submit"
-              variant="destructive"
-            >
-              삭제
-            </Button>
+            <Button type="submit">저장</Button>
             <SheetClose asChild>
               <Button type="button" variant="outline">
                 닫기
