@@ -63,6 +63,7 @@ export function ManageUserView({ players, playerTypes }: Props) {
   return (
     <div className="space-y-4 p-4">
       <ToggleGroup
+        variant="outline"
         type="single"
         value={viewMode}
         onValueChange={(val) => setViewMode(val as "card" | "table")}
