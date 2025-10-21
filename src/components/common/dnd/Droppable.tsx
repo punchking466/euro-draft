@@ -15,6 +15,5 @@ export function Droppable({
     accept: ["item"],
     collisionPriority: CollisionPriority.Low,
   });
-  // console.log(id);
   return <div ref={ref}>{children}</div>;
 }
