@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "../ui/badge";
-import { useModal } from "@/contexts/ModalContext";
+import { useAlertModal } from "@/contexts/ModalContext";
 import { useTransition, useMemo } from "react";
 import { toast } from "sonner";
 import { deletePlayer } from "@/actions/player";
@@ -14,7 +14,7 @@ import { useLoading } from "@/contexts/LoadingContext";
 import { PlayerDto } from "@/types/Player.type";
 
 export function SectionCard({ user }: { user: PlayerDto }) {
-  const { showModal, hideModal } = useModal();
+  const { showModal, hideModal } = useAlertModal();
   const { showLoading, hideLoading } = useLoading();
   const [isPending, startTransition] = useTransition();
 

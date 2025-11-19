@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { DialogClose } from "@/components/ui/dialog";
 import { useUserStore } from "@/store/user/useUserStore";
 import { cn } from "@/lib/utils";
 
@@ -56,14 +55,12 @@ export const AddPlayerDialogBody = ({ assignedIds, onConfirm }: Props) => {
       ))}
 
       <div className="pt-3">
-        <DialogClose asChild>
-          <Button
-            className="w-full"
-            onClick={() => onConfirm(Array.from(selectedIds))}
-          >
-            저장
-          </Button>
-        </DialogClose>
+        <Button
+          className="w-full"
+          onClick={() => onConfirm(Array.from(selectedIds))}
+        >
+          저장
+        </Button>
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/sonner";
 import { LoadingProvider } from "@/contexts/LoadingContext";
 import { ModalProvider } from "@/contexts/ModalContext";
+import KakaoScript from "@/lib/KakaoScript";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -19,6 +20,7 @@ export default function RootLayout({
   return (
     <html>
       <body>
+        <KakaoScript />
         <ModalProvider>
           <LoadingProvider>
             <Toaster />

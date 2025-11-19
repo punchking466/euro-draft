@@ -7,7 +7,7 @@ import { PlayerDto } from "@/types/Player.type";
 import { LayoutGrid, Table } from "lucide-react";
 import { DataTable } from "../DataTable/DataTable";
 import { getColumns } from "./Column";
-import { useModal } from "@/contexts/ModalContext";
+import { useAlertModal } from "@/contexts/ModalContext";
 import { useLoading } from "@/contexts/LoadingContext";
 import { toast } from "sonner";
 import { deletePlayer } from "@/actions/player";
@@ -21,7 +21,7 @@ export function ManageUserView({ players, playerTypes }: Props) {
   const allPlayers = use(players);
   const allUserTypes = use(playerTypes);
 
-  const { showModal, hideModal } = useModal();
+  const { showModal, hideModal } = useAlertModal();
   const { showLoading, hideLoading } = useLoading();
   const startTransition = useTransition()[1];
 

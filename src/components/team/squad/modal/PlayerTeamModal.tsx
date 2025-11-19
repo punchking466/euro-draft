@@ -1,55 +1,56 @@
 import { CustomDialog } from "@/components/dialog/CustomDiaglog";
 import { Button } from "@/components/ui/button";
-import { PlayerDto } from "@/types/Player.type";
 
 interface Props {
-  teamCount: number;
+  open: boolean;
+  teams: string[];
   currentTeam: string;
-  targetPlayer: PlayerDto;
+  targetPlayerInfo: { targetId: string; mode: "move" | "edit" };
   onSwapTeam: (from: string, to: string, target: string) => void;
   onRemoveTeam?: (team: string, target: string) => void;
+  onClose: () => void;
 }
 
 export function PlayerTeamModal({
-  teamCount,
+  open,
+  teams,
   currentTeam,
-  targetPlayer,
+  targetPlayerInfo,
   onSwapTeam,
   onRemoveTeam,
+  onClose,
 }: Props) {
-  if (!targetPlayer) return;
+  if (!targetPlayerInfo || !targetPlayerInfo.targetId) return;
+  const { targetId, mode } = targetPlayerInfo;
 
   return (
     <CustomDialog
-      key={targetPlayer.id}
+      key={targetId}
       contentClassName="w-52"
-      trigger={
-        <Button variant="secondary" className="text-lg">
-          No.{targetPlayer.backNumber} {targetPlayer.name}
-        </Button>
-      }
       title="선수 이동"
+      open={open}
+      onClose={onClose}
     >
-      {[...Array(teamCount)].map((_, targetTeamIdx) => (
+      {teams.map((team) => (
         <Button
-          key={targetTeamIdx}
+          key={team}
           variant="outline"
           className="w-full"
           onClick={() => {
-            onSwapTeam(
-              currentTeam,
-              `team${targetTeamIdx + 1}`,
-              targetPlayer.id,
-            );
+            onSwapTeam(currentTeam, team, targetId);
+            onClose();
           }}
         >
-          Team {targetTeamIdx + 1}으로 이동
+          {team}으로 이동
         </Button>
       ))}
-      {onRemoveTeam && (
+      {mode === "edit" && onRemoveTeam && (
         <Button
           variant="destructive"
-          onClick={() => onRemoveTeam(currentTeam, targetPlayer.id)}
+          onClick={() => {
+            onRemoveTeam(currentTeam, targetId);
+            onClose();
+          }}
         >
           제거
         </Button>

@@ -23,7 +23,7 @@ const ModalContext = createContext<ModalContextValue>({
   hideModal: () => {},
 });
 
-export const useModal = () => useContext(ModalContext);
+export const useAlertModal = () => useContext(ModalContext);
 
 export const ModalProvider = ({ children }: { children: React.ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -43,7 +43,7 @@ export const ModalProvider = ({ children }: { children: React.ReactNode }) => {
     <ModalContext.Provider value={{ showModal, hideModal }}>
       {children}
       {isOpen && options && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(0,0,0,0.3)] p-10">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-[rgba(0,0,0,0.3)] p-10">
           <div className="w-full max-w-sm rounded bg-white p-6 shadow-lg">
             {options.title && (
               <h2 className="mb-2 text-lg font-bold">{options.title}</h2>

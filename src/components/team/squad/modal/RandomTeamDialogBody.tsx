@@ -40,7 +40,7 @@ export function RandomTeamDialogBody({
     const currentYear = new Date().getFullYear();
     const now = new Date();
 
-    // 3. 가중치 점수 계산
+    // 3. 점수 계산 및 필터링
     const scoredPlayers = selectedPlayers
       .map((playerId) => {
         const player = userMap.get(playerId);
@@ -48,31 +48,30 @@ export function RandomTeamDialogBody({
 
         let score = 0;
 
-        // 플레이 실력 점수 (0~100)
+        // 실력 점수
         score += player.score ?? 50;
 
-        // 나이 가중치: 나이 많을수록 점수 낮게
+        // 나이 가중치
         const age = currentYear - (player.birthYear ?? currentYear);
         if (age >= 50) score -= 20;
         else if (age >= 40) score -= 10;
         else if (age >= 30) score -= 5;
 
-        // 최근 1개월 이상 미참석자 감점
+        // 미참석자 감점
         const lastPlayed = new Date(player.lastPlayed);
         const oneMonthAgo = new Date(now);
         oneMonthAgo.setMonth(now.getMonth() - 1);
         const isAbsent = lastPlayed < oneMonthAgo;
         if (isAbsent) score -= 10;
 
-        // 랜덤성 부여
+        // 랜덤 가중치
         score += Math.random() * 10;
 
         return { player, score };
       })
-      // null 제거 + 타입 안전화
       .filter((v): v is { player: PlayerDto; score: number } => v !== null);
 
-    // 4. 포지션별로 분리
+    // 4. 포지션별로 분리 및 정렬
     const positionGroups: Record<
       string,
       { player: PlayerDto; score: number }[]
@@ -83,45 +82,53 @@ export function RandomTeamDialogBody({
       positionGroups[pos].push(item);
     }
 
-    // 5. 포지션 내부 점수 순 정렬
     for (const pos in positionGroups) {
       positionGroups[pos].sort((a, b) => b.score - a.score);
     }
 
-    // 6. 팀 객체 초기화
-    const teams: Record<number, PlayerDto[]> = {};
-    for (let i = 1; i <= teamCount; i++) teams[i] = [];
+    // 5. 팀 이름 생성 (Black 1팀, White 1팀 ...)
+    const teamNames = Array.from({ length: teamCount }).map((_, idx) => {
+      const color = idx % 2 === 0 ? "Black" : "White";
+      const group = Math.floor(idx / 2) + 1;
+      return `${color} ${group}팀`;
+    });
 
-    // 7. 포지션별 Snake Draft
+    // 6. 팀 구조 초기화
+    const teams: Record<string, PlayerDto[]> = {};
+    for (const name of teamNames) {
+      teams[name] = [];
+    }
+
+    // 7. Snake Draft 배치
     for (const pos in positionGroups) {
       const list = positionGroups[pos];
-      let direction = 1; // 1: → , -1: ←
-      let teamIdx = 1;
+      let direction = 1; // 1: →, -1: ←
+      let teamIdx = 0;
 
       for (const { player } of list) {
-        teams[teamIdx].push(player);
+        const teamName = teamNames[teamIdx];
+        teams[teamName].push(player);
 
-        // 방향 전환
         if (direction === 1) {
           teamIdx++;
-          if (teamIdx > teamCount) {
+          if (teamIdx >= teamNames.length) {
             direction = -1;
-            teamIdx = teamCount;
+            teamIdx = teamNames.length - 1;
           }
         } else {
           teamIdx--;
-          if (teamIdx < 1) {
+          if (teamIdx < 0) {
             direction = 1;
-            teamIdx = 1;
+            teamIdx = 0;
           }
         }
       }
     }
 
-    // 8. 실제 할당
-    for (const [key, users] of Object.entries(teams)) {
+    // 8. 실제 팀에 할당
+    for (const [teamKey, users] of Object.entries(teams)) {
       users.forEach((user) => {
-        onSwapTeam("pool", `team${key}`, user.id);
+        onSwapTeam("pool", teamKey, user.id);
       });
     }
   };

@@ -1,37 +1,35 @@
 import { useUserStore } from "@/store/user/useUserStore";
 import { Sortable } from "../../common/dnd/Sortable";
-import { PlayerTeamModal } from "./modal/PlayerTeamModal";
-import { useModal } from "@/contexts/ModalContext";
-import { RotateCcw } from "lucide-react";
-import { PlyaerToTeam } from "./modal/PlayerToTeamModal";
+import { useAlertModal } from "@/contexts/ModalContext";
+import { Plus, RotateCcw } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { OpenEditArgs } from "./TeamSquadClient";
 
 interface Props {
-  teamIdx: number;
-  teamCount: number;
-  teams: Record<string, string[]>;
+  teamData: {
+    teamKey: string;
+    teamCount: number;
+    teams: Record<string, string[]>;
+  };
   onSwapTeam: (from: string, to: string, target: string) => void;
   onRemoveTeam: (team: string, target: string) => void;
   onRemoveAllFromTeam: (teamKey: string) => void;
+  onOpenEdit: ({ mode, teamKey, modalId, targetId }: OpenEditArgs) => void;
 }
 
 export function TeamSection({
-  teamIdx,
-  teamCount,
-  teams,
-  onSwapTeam,
-  onRemoveTeam,
+  teamData,
   onRemoveAllFromTeam,
+  onOpenEdit,
 }: Props) {
-  const { showModal, hideModal } = useModal();
+  const { showModal, hideModal } = useAlertModal();
   const userMap = useUserStore((state) => state.userMap);
-  const teamKey = `team${teamIdx + 1}`;
+  const { teamKey, teams } = teamData;
 
   return (
     <div className="flex min-h-[200px] flex-col justify-between gap-2 rounded-lg border p-4">
       <div className="flex flex-row items-center justify-between">
-        <div className="font-bold">
-          {teamIdx / 2 === 0 ? "Black" : "White"} {teamIdx + 1}
-        </div>
+        <div className="font-bold">{teamKey}</div>
         <button
           className="hover:bg-muted rounded-lg p-2"
           onClick={() => {
@@ -64,24 +62,33 @@ export function TeamSection({
 
           return (
             <Sortable key={targetPlayer.id} id={targetPlayer.id} index={index}>
-              <PlayerTeamModal
-                teamCount={teamCount}
-                currentTeam={teamKey}
-                targetPlayer={targetPlayer}
-                onSwapTeam={onSwapTeam}
-                onRemoveTeam={onRemoveTeam}
-              />
+              <Button
+                variant="secondary"
+                className="text-lg"
+                onClick={() => {
+                  onOpenEdit({
+                    teamKey,
+                    modalId: "move-player",
+                    targetId: targetPlayer.id,
+                    mode: "edit",
+                  });
+                }}
+              >
+                No.{targetPlayer.backNumber} {targetPlayer.name}
+              </Button>
             </Sortable>
           );
         })}
       </div>
-      <PlyaerToTeam
-        teamKey={teamKey}
-        assignedIds={Object.entries(teams)
-          .filter(([key]) => key !== "pool")
-          .flatMap(([, ids]) => ids)}
-        onSubmit={onSwapTeam}
-      />
+
+      <Button
+        variant="outline"
+        className="mt-4 flex w-fit items-center gap-1 px-2 py-1 text-sm text-blue-500 transition-colors hover:bg-blue-50 hover:text-blue-600"
+        onClick={() => onOpenEdit({ teamKey, modalId: "add-player" })}
+      >
+        <Plus className="h-4 w-4" />
+        팀원 추가
+      </Button>
     </div>
   );
 }
