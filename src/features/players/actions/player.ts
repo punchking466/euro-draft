@@ -31,7 +31,8 @@ export async function registerPlayer(prevState: FormState, formData: FormData) {
         userType: formObj["userType"] as string,
         score: formObj["score"] as string,
         birthYear: formObj["birthYear"] as string,
-        lastPlayed: formObj["birthYear"] as string,
+        // Preserve user's date input on validation failure.
+        lastPlayed: formObj["lastPlayed"] as string,
       },
       errors: extractFirstErrors(errors),
     };
@@ -88,7 +89,8 @@ export async function upsertPlayer(prevState: FormState, formData: FormData) {
         backNumber: formObj["backNumber"] as string,
         score: formObj["score"] as string,
         birthYear: formObj["birthYear"] as string,
-        lastPlayed: formObj["birthYear"] as string,
+        // Preserve user's date input on validation failure.
+        lastPlayed: formObj["lastPlayed"] as string,
       },
       errors: extractFirstErrors(errors),
     };

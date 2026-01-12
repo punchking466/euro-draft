@@ -3,14 +3,14 @@
 import { use, useState, useTransition } from "react";
 import { ManageUserCards } from "./ManageUserCards";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { PlayerDto } from "@/types/Player.type";
+import { PlayerDto } from "@/features/players/types/Player.type";
 import { LayoutGrid, Table } from "lucide-react";
-import { DataTable } from "../DataTable/DataTable";
+import { DataTable } from "@/components/DataTable/DataTable";
 import { getColumns } from "./Column";
 import { useAlertModal } from "@/contexts/ModalContext";
 import { useLoading } from "@/contexts/LoadingContext";
 import { toast } from "sonner";
-import { deletePlayer } from "@/actions/player";
+import { deletePlayer } from "@/features/players/actions/player";
 
 interface Props {
   players: Promise<PlayerDto[]>;

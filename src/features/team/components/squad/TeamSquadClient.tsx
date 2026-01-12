@@ -1,12 +1,12 @@
 "use client";
-import { PlayerDto } from "@/types/Player.type";
+import { PlayerDto } from "@/features/players/types/Player.type";
 import { TeamSquadHeader } from "./TeamSquadHeader";
 import { useEffect, useState } from "react";
 import { TeamSection } from "./TeamSection";
 import { DragDropProvider } from "@dnd-kit/react";
 import { useUserStore } from "@/store/user/useUserStore";
 import { PlayerSection } from "./PlayerSection";
-import { Droppable } from "../../common/dnd/Droppable";
+import { Droppable } from "@/components/common/dnd/Droppable";
 import { move } from "@dnd-kit/helpers";
 import { useTeams } from "./hooks/useTeams";
 import { useModalState } from "./hooks/useModal";

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { PlayerDto } from "@/types/Player.type";
+import { PlayerDto } from "@/features/players/types/Player.type";
 import { DialogClose } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { useUserStore } from "@/store/user/useUserStore";

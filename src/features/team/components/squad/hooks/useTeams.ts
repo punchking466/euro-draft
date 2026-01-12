@@ -1,4 +1,4 @@
-import { registerTeams } from "@/actions/teamSquad";
+import { registerTeams } from "@/features/team/actions/teamSquad";
 import { handleShareKakao } from "@/lib/KakaoScript";
 import { useUserStore } from "@/store/user/useUserStore";
 import { useState } from "react";

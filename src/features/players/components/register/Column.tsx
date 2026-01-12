@@ -1,10 +1,10 @@
 "use client";
-import { PlayerDto } from "@/types/Player.type";
+import { PlayerDto } from "@/features/players/types/Player.type";
 import { ColumnDef } from "@tanstack/react-table";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import { ArrowUpDown, Pencil, Trash } from "lucide-react";
 import { EditUserSheet } from "./EditUserSheet";
-import { Badge } from "../ui/badge";
+import { Badge } from "@/components/ui/badge";
 
 export const getColumns = (
   userTypes: { label: string; value: string }[],
@@ -114,7 +114,8 @@ export const getColumns = (
     accessorKey: "lastPlayed",
     header: "마지막참가일",
     cell: ({ row }) => {
-      const lastPlayed = row.getValue("lastPlayed") as Date;
+      // Parse ISO string for display.
+      const lastPlayed = row.getValue("lastPlayed") as string;
       return (
         <div className="font-medium">
           {lastPlayed

@@ -1,5 +1,5 @@
 import { useUserStore } from "@/store/user/useUserStore";
-import { Sortable } from "../../common/dnd/Sortable";
+import { Sortable } from "@/components/common/dnd/Sortable";
 import { useAlertModal } from "@/contexts/ModalContext";
 import { Plus, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";

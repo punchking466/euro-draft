@@ -13,13 +13,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { upsertPlayer } from "@/actions/player";
-import { SectionCard } from "./section-cards";
-import { CalendarPop } from "../calendar/CalendarPop";
+import { upsertPlayer } from "@/features/players/actions/player";
+import { CalendarPop } from "@/components/calendar/CalendarPop";
 import { useActionState, useEffect, useState } from "react";
-import { FullscreenLoader } from "../common/Loader/FullscreenLoader";
+import { FullscreenLoader } from "@/components/common/Loader/FullscreenLoader";
 import { toast } from "sonner";
-import { PlayerDto } from "@/types/Player.type";
+import { PlayerDto } from "@/features/players/types/Player.type";
 import { SelectDropdown } from "./SelectDropdown";
 
 interface FormState {
@@ -32,12 +31,14 @@ const initialState: FormState = {
   errors: {},
 };
 
-export function UserCard({
+export function EditUserSheet({
   user,
   userTypes,
+  children,
 }: {
   user: PlayerDto;
   userTypes: { value: string; label: string }[];
+  children: React.ReactNode;
 }) {
   const [state, formAction, isPending] = useActionState(
     upsertPlayer,
@@ -49,7 +50,8 @@ export function UserCard({
   const [positionValue, setPositionValue] = useState(user.position ?? "");
   const [userTypeValue, setUserTypeValue] = useState("");
   const [lastPlayed, setLastPlayed] = useState<Date | undefined>(
-    user.lastPlayed ?? undefined,
+    // Convert serialized date for CalendarPop.
+    user.lastPlayed ? new Date(user.lastPlayed) : undefined,
   );
 
   useEffect(() => {
@@ -69,11 +71,7 @@ export function UserCard({
     >
       {isPending && <FullscreenLoader />}
 
-      <SheetTrigger asChild>
-        <div role="button" tabIndex={0} className="cursor-pointer">
-          <SectionCard user={user} />
-        </div>
-      </SheetTrigger>
+      <SheetTrigger asChild>{children}</SheetTrigger>
       <SheetContent className="overflow-auto">
         <SheetHeader>
           <SheetTitle>회원 수정</SheetTitle>
@@ -147,7 +145,8 @@ export function UserCard({
               inputMode="numeric"
               defaultValue={state.value?.backNumber ?? user.backNumber}
               className={
-                state && state.errors?.name
+                // Use backNumber errors for styling.
+                state && state.errors?.backNumber
                   ? "border-red-500 ring-1 ring-red-500"
                   : ""
               }
@@ -166,12 +165,13 @@ export function UserCard({
               selectedValue={(userTypeValue || `${user.userType?.code}`) ?? ""}
               selectValues={userTypes}
               placeholder="회원 유형을 선택해 주세요"
-              isError={!!state.errors?.position}
+              // Use userType errors for styling.
+              isError={!!state.errors?.userType}
               onChange={(val: string) => setUserTypeValue(val)}
             />
 
-            {state && state.errors?.position && (
-              <p className="text-sm text-red-500">{state.errors.position}</p>
+            {state && state.errors?.userType && (
+              <p className="text-sm text-red-500">{state.errors.userType}</p>
             )}
           </div>
 

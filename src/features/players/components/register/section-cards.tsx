@@ -5,13 +5,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "../ui/badge";
+import { Badge } from "@/components/ui/badge";
 import { useAlertModal } from "@/contexts/ModalContext";
 import { useTransition, useMemo } from "react";
 import { toast } from "sonner";
-import { deletePlayer } from "@/actions/player";
+import { deletePlayer } from "@/features/players/actions/player";
 import { useLoading } from "@/contexts/LoadingContext";
-import { PlayerDto } from "@/types/Player.type";
+import { PlayerDto } from "@/features/players/types/Player.type";
 
 export function SectionCard({ user }: { user: PlayerDto }) {
   const { showModal, hideModal } = useAlertModal();

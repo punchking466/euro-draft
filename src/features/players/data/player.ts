@@ -2,7 +2,7 @@ import { connectDB } from "@/lib/mongodb";
 import { Player } from "@/lib/models/player.model";
 import { Types } from "mongoose";
 import { UserType } from "@/lib/models/user-type.model";
-import { PlayerDto } from "@/types/Player.type";
+import { PlayerDto } from "@/features/players/types/Player.type";
 
 interface PlayerType {
   _id: Types.ObjectId;
@@ -39,7 +39,8 @@ export async function getAllPlayers() {
     },
     score: doc.score,
     birthYear: doc.birthYear,
-    lastPlayed: doc.lastPlayed,
+    // Serialize Date for client component props.
+    lastPlayed: doc.lastPlayed.toISOString(),
   }));
 }
 
@@ -67,7 +68,8 @@ export async function getAllPlayersGroupedByPosition() {
         },
         score: doc.score,
         birthYear: doc.birthYear,
-        lastPlayed: doc.lastPlayed,
+        // Serialize Date for client component props.
+        lastPlayed: doc.lastPlayed.toISOString(),
       });
       return acc;
     },

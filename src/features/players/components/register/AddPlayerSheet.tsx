@@ -1,6 +1,6 @@
 "use client";
 
-import { registerPlayer } from "@/actions/player";
+import { registerPlayer } from "@/features/players/actions/player";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -16,8 +16,8 @@ import {
 import { Label } from "@radix-ui/react-label";
 import { UserPlus } from "lucide-react";
 import { use, useActionState, useEffect, useState } from "react";
-import { FullscreenLoader } from "../common/Loader/FullscreenLoader";
-import { CalendarPop } from "../calendar/CalendarPop";
+import { FullscreenLoader } from "@/components/common/Loader/FullscreenLoader";
+import { CalendarPop } from "@/components/calendar/CalendarPop";
 import { SelectDropdown } from "./SelectDropdown";
 
 interface FormState {
@@ -128,7 +128,8 @@ export function AddPlayerSheet({
               inputMode="numeric"
               defaultValue={state.value?.backNumber ?? ""}
               className={
-                state && state.errors?.name
+                // Use backNumber errors for styling.
+                state && state.errors?.backNumber
                   ? "border-red-500 ring-1 ring-red-500"
                   : ""
               }
@@ -147,12 +148,13 @@ export function AddPlayerSheet({
               selectedValue={userTypeValue}
               selectValues={allUserTypes}
               placeholder="회원 유형을 선택해 주세요"
-              isError={!!state.errors?.position}
+              // Use userType errors for styling.
+              isError={!!state.errors?.userType}
               onChange={(val: string) => setUserTypeValue(val)}
             />
 
-            {state && state.errors?.position && (
-              <p className="text-sm text-red-500">{state.errors.position}</p>
+            {state && state.errors?.userType && (
+              <p className="text-sm text-red-500">{state.errors.userType}</p>
             )}
           </div>
 

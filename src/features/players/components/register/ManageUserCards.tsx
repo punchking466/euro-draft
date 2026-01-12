@@ -1,5 +1,5 @@
 "use client";
-import { PlayerDto } from "@/types/Player.type";
+import { PlayerDto } from "@/features/players/types/Player.type";
 import { EditUserSheet } from "./EditUserSheet";
 import { SectionCard } from "./section-cards";
 

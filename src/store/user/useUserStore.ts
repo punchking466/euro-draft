@@ -1,4 +1,4 @@
-import { PlayerDto } from "@/types/Player.type";
+import { PlayerDto } from "@/features/players/types/Player.type";
 import { create } from "zustand";
 
 interface UserStore {

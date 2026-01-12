@@ -16,7 +16,7 @@ export async function registerTeams2(prevState: FormState, formData: FormData) {
   const result = TeamSchema.safeParse(fromObj);
 
   if (!result.success) {
-    const erros = result.error.flatten().fieldErrors;
+    const errors = result.error.flatten().fieldErrors;
     return {
       value: {
         name: fromObj["name"] as string,
@@ -24,7 +24,8 @@ export async function registerTeams2(prevState: FormState, formData: FormData) {
         teamCount: fromObj["teamCount"] as string,
         teams: fromObj["teams"] as string,
       },
-      erros: extractFirstErrors(erros),
+      // Align with FormState.errors key.
+      errors: extractFirstErrors(errors),
     };
   }
 
@@ -50,7 +51,8 @@ export async function registerTeams2(prevState: FormState, formData: FormData) {
   revalidatePath("/team/squad");
   return {
     value: undefined,
-    erros: {},
+    // Align with FormState.errors key.
+    errors: {},
   };
 }
 

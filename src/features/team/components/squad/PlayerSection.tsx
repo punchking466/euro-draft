@@ -1,7 +1,7 @@
 import { useUserStore } from "@/store/user/useUserStore";
-import { PlayerDto } from "@/types/Player.type";
-import { Droppable } from "../../common/dnd/Droppable";
-import { Sortable } from "../../common/dnd/Sortable";
+import { PlayerDto } from "@/features/players/types/Player.type";
+import { Droppable } from "@/components/common/dnd/Droppable";
+import { Sortable } from "@/components/common/dnd/Sortable";
 import { Button } from "@/components/ui/button";
 import { OpenEditArgs } from "./TeamSquadClient";
 

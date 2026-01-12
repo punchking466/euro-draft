@@ -5,7 +5,8 @@ export type PlayerDto = {
   backNumber: number;
   score: number;
   birthYear: number;
-  lastPlayed: Date;
+  // Keep Date serializable when passed to client components.
+  lastPlayed: string;
   userType: {
     id: string;
     code: number;

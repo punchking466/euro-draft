@@ -1,10 +1,10 @@
 import { Suspense } from "react";
 import { SkeletonCard } from "./SkeletonCard";
 import { SiteHeader } from "@/components/site-header";
-import { AddPlayerSheet } from "@/components/register/AddPlayerSheet";
-import { getAllPlayers, getUserTypes } from "@/data/player";
+import { AddPlayerSheet } from "@/features/players/components/register/AddPlayerSheet";
+import { getAllPlayers, getUserTypes } from "@/features/players/data/player";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ManageUserView } from "@/components/register/ManageUserVIew";
+import { ManageUserView } from "@/features/players/components/register/ManageUserVIew";
 
 export default async function RegisterPage() {
   const players = getAllPlayers();

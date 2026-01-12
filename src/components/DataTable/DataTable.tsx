@@ -28,7 +28,7 @@ import {
 } from "../ui/select";
 import { useRef } from "react";
 import { utils, writeFileXLSX } from "xlsx";
-import { PlayerDto } from "@/types/Player.type";
+import { PlayerDto } from "@/features/players/types/Player.type";
 import { Download } from "lucide-react";
 
 interface DataTableProps<TData, TValue> {
