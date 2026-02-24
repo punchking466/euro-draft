@@ -8,6 +8,11 @@ import {
 } from "@/components/ui/accordion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Pencil, Share, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ButtonGroup } from "@/components/ui/button-group";
+import { handleShareKakao } from "@/lib/KakaoScript";
+import { formatDateTypeB } from "@/utils/dateFormat";
 
 interface TeamPlayer {
   id: string; // resolved from $oid
@@ -23,7 +28,7 @@ interface Team {
 
 interface TeamHistoryEntry {
   name: string;
-  createdAt: string;
+  createdAt: Date;
   teams: Team[];
 }
 
@@ -37,12 +42,45 @@ export function TeamHistoryAccordion({ data }: Props) {
       {data.map((entry, idx) => (
         <AccordionItem key={idx} value={`entry-${idx}`}>
           <AccordionTrigger>
-            <span className="text-lg font-semibold">
-              {new Date(entry.createdAt).getFullYear()}년 정기 팀 게임 -{" "}
-              {entry.name}
-            </span>
+            <div className="flex w-full items-end justify-between">
+              <span className="text-lg font-semibold">
+                {/* {new Date(entry.createdAt).getFullYear()}년 정기 팀 게임 -{" "} */}
+                {entry.name}
+              </span>
+              <p className="text-[10px]">{formatDateTypeB(entry.createdAt)}</p>
+            </div>
           </AccordionTrigger>
           <AccordionContent>
+            <div className="mb-3 flex w-full justify-end gap-4">
+              <ButtonGroup>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    handleShareKakao(
+                      [
+                        {
+                          name: "Team 1",
+                          players: ["aa", "bb"],
+                        },
+                        {
+                          name: "Team 2",
+                          players: ["aa", "bb"],
+                        },
+                      ],
+                      new Date(),
+                    );
+                  }}
+                >
+                  <Share className="h-4 w-4" />
+                </Button>
+                <Button variant="outline">
+                  <Pencil className="h-4 w-4" />
+                </Button>
+                <Button variant="destructive">
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </ButtonGroup>
+            </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               {entry.teams.map((team, teamIdx) => (
                 <Card key={teamIdx} className="shadow-md">
@@ -64,10 +102,10 @@ export function TeamHistoryAccordion({ data }: Props) {
                             <Badge variant="secondary">
                               No.{player.backNumber}
                             </Badge>
-                            <span className="font-medium">{player.name}</span>
                             <Badge variant="outline" className="text-xs">
                               {player.position}
                             </Badge>
+                            <span className="font-medium">{player.name}</span>
                           </div>
                         </div>
                       ))

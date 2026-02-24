@@ -17,7 +17,7 @@ export interface TeamSnapshotDocument extends Document {
 const TeamSchema = new Schema<Team>(
   {
     name: { type: String, required: true },
-    players: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    players: [{ type: Schema.Types.ObjectId, ref: "Member" }],
   },
   { _id: false },
 );
@@ -25,7 +25,7 @@ const TeamSchema = new Schema<Team>(
 const TeamSnapshotSchema = new Schema<TeamSnapshotDocument>(
   {
     name: { type: String, required: true },
-    createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    createdBy: { type: Schema.Types.ObjectId, ref: "Member", required: true },
     teamCount: { type: Number, required: true },
     teams: { type: [TeamSchema], required: true },
   },

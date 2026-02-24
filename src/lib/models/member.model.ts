@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const PlayerSchema = new mongoose.Schema(
+const MemberSchema = new mongoose.Schema(
   {
     name: String,
     position: String,
@@ -15,5 +15,5 @@ const PlayerSchema = new mongoose.Schema(
   },
 );
 
-export const Player =
-  mongoose.models.Player || mongoose.model("Player", PlayerSchema);
+export const Member =
+  mongoose.models.Member || mongoose.model("Member", MemberSchema);

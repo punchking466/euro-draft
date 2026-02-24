@@ -1,10 +1,10 @@
 import { connectDB } from "@/lib/mongodb";
-import { Player } from "@/lib/models/player.model";
+import { Member } from "@/lib/models/member.model";
 import { Types } from "mongoose";
 import { UserType } from "@/lib/models/user-type.model";
 import { PlayerDto } from "@/features/players/types/Player.type";
 
-interface PlayerType {
+interface MemberType {
   _id: Types.ObjectId;
   name: string;
   backNumber: number;
@@ -21,10 +21,10 @@ interface PlayerType {
 
 export async function getAllPlayers() {
   await connectDB();
-  const docs = await Player.find()
+  const docs = await Member.find()
     .populate("userType")
     .sort({ name: "asc" })
-    .lean<PlayerType[]>()
+    .lean<MemberType[]>()
     .exec();
 
   return docs.map((doc) => ({
@@ -46,10 +46,10 @@ export async function getAllPlayers() {
 
 export async function getAllPlayersGroupedByPosition() {
   await connectDB();
-  const docs = await Player.find()
+  const docs = await Member.find()
     .populate("userType")
     .sort({ name: "asc" })
-    .lean<PlayerType[]>()
+    .lean<MemberType[]>()
     .exec();
 
   const grouped = docs.reduce<Record<string, PlayerDto[]>>(

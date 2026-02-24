@@ -1,7 +1,7 @@
 "use server";
 
 import { connectDB } from "@/lib/mongodb";
-import { Player } from "@/lib/models/player.model";
+import { Member } from "@/lib/models/member.model";
 import { revalidatePath } from "next/cache";
 import {
   PlayerSchema,
@@ -50,7 +50,7 @@ export async function registerPlayer(prevState: FormState, formData: FormData) {
 
     if (!foundUserType) throw new Error("존재하지 않는 유형입니다.");
 
-    await Player.create({
+    await Member.create({
       name,
       position,
       backNumber,
@@ -107,7 +107,7 @@ export async function upsertPlayer(prevState: FormState, formData: FormData) {
       .exec();
     if (!foundUserType) throw new Error("존재하지 않는 유형입니다.");
 
-    await Player.findByIdAndUpdate(formObj.id, {
+    await Member.findByIdAndUpdate(formObj.id, {
       name,
       position,
       backNumber,
@@ -138,6 +138,6 @@ export async function deletePlayer(userId: string) {
 
   await connectDB();
 
-  await Player.findByIdAndDelete(userId);
+  await Member.findByIdAndDelete(userId);
   revalidatePath("/register");
 }

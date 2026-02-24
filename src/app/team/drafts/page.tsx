@@ -4,20 +4,23 @@ import { getAllTeams } from "@/features/team/data/teams";
 
 export default async function TeamSquad() {
   const rawTeams = await getAllTeams();
-
   const teams = rawTeams.map((entry) => ({
     name: entry.name,
-    createdAt: entry.createdAt.toISOString(), // ✅ 변환
+    createdAt: entry.createdAt,
     teams: entry.teams.map((team) => ({
       name: team.name,
       players: team.players.map((player) => ({
-        id: player,
-        name: "이름미정", // ✅ 아직 없으면 기본값
-        backNumber: 0, // ✅ 추후 매핑 필요
-        position: "미정", // ✅ 추후 매핑 필요
+        id: player.id,
+        name: player.name,
+        backNumber: player.backNumber,
+        position: player.position,
       })),
     })),
   }));
 
-  return <TeamHistoryAccordion data={teams} />;
+  return (
+    <div className="@container/main grid gap-10 p-5">
+      <TeamHistoryAccordion data={teams} />
+    </div>
+  );
 }
