@@ -1,6 +1,6 @@
 "use client";
 import { PlayerDto } from "@/features/players/types/Player.type";
-import { TeamSquadHeader } from "./TeamSquadHeader";
+import { TeamBuilderHeader } from "./TeamBuilderHeader";
 import { useEffect, useState } from "react";
 import { TeamSection } from "./TeamSection";
 import { DragDropProvider } from "@dnd-kit/react";
@@ -13,9 +13,11 @@ import { useModalState } from "./hooks/useModal";
 import { SaveTeamDialog } from "./modal/SaveTeamDialog";
 import { PlyaerToTeam } from "./modal/PlayerToTeamModal";
 import { PlayerTeamModal } from "./modal/PlayerTeamModal";
+import { TeamSnapshot } from "@/features/team/data/teams";
 
-interface TeamSquadClientProps {
+interface TeamBuilderClientProps {
   players: PlayerDto[];
+  initialSnapshot?: TeamSnapshot | null;
 }
 
 export interface OpenEditArgs {
@@ -25,7 +27,10 @@ export interface OpenEditArgs {
   targetId?: string;
 }
 
-export function TeamSquadClient({ players }: TeamSquadClientProps) {
+export function TeamBuilderClient({
+  players,
+  initialSnapshot,
+}: TeamBuilderClientProps) {
   const {
     teams,
     teamCount,
@@ -38,7 +43,7 @@ export function TeamSquadClient({ players }: TeamSquadClientProps) {
     resetTeams,
     shareKakao,
     isValidTeams,
-  } = useTeams([...new Set(players.map((p) => p.id))]);
+  } = useTeams(players, initialSnapshot);
 
   const setUserMap = useUserStore((state) => state.setUserMap);
   const { open, close, isOpen } = useModalState();
@@ -64,7 +69,7 @@ export function TeamSquadClient({ players }: TeamSquadClientProps) {
   return (
     <div className="max-h-(--main-content-height) flex-[6] space-y-4 overflow-y-auto">
       <div className="flex flex-row items-end gap-4">
-        <TeamSquadHeader
+        <TeamBuilderHeader
           teamCount={teamCount}
           onChange={(val) => changeTeam(val)}
           onSwapTeam={swapTeam}
@@ -76,6 +81,7 @@ export function TeamSquadClient({ players }: TeamSquadClientProps) {
         {/* 스쿼드 저장 모달 */}
         <SaveTeamDialog
           open={isOpen("save-team")}
+          prevName={initialSnapshot?.name}
           onClose={close}
           onSubmit={saveTeams}
         />
@@ -110,7 +116,11 @@ export function TeamSquadClient({ players }: TeamSquadClientProps) {
         teamKey={selectTeamKey}
         assignedIds={Object.entries(teams)
           .filter(([key]) => key !== "pool")
-          .flatMap(([, ids]) => ids)}
+          .flatMap(([, teamPlayers]) =>
+            teamPlayers
+              .filter((player) => !player.isGuest)
+              .map((player) => player.id),
+          )}
         onSubmit={swapTeam}
         onClose={close}
       />

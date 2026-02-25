@@ -21,10 +21,10 @@ export function RandomTeamModal({
       trigger={
         <Button
           variant="outline"
-          className="mt-4 flex w-fit items-center gap-1 px-2 py-1 text-sm text-blue-500 transition-colors hover:bg-blue-50 hover:text-blue-600"
+          className="hover:bg-blue-50 hover:text-blue-600"
         >
           <Shuffle className="h-4 w-4" />
-          랜덤 생성
+          <span className="btn-icon-text">랜덤 생성</span>
         </Button>
       }
     >

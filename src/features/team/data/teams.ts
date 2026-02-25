@@ -1,30 +1,26 @@
-import { TeamSnapshot } from "@/lib/models/team-snapshot";
+import { TeamSnapshot as TeamSnapshotModel } from "@/lib/models/team-snapshot";
 import { connectDB } from "@/lib/mongodb";
-import "@/lib/models/member.model";
 import { Types } from "mongoose";
 
-export async function getAllTeams(): Promise<TeamSnapshot[]> {
-  await connectDB();
-  const docs = await TeamSnapshot.find()
-    .populate("teams.players", "name backNumber position")
-    .lean<LeanTeamSnapshot[]>();
+export interface TeamPlayerSnapshot {
+  id?: string;
+  name: string;
+  backNumber: number;
+  position: string;
+  isGuest: boolean;
+}
 
-  return docs.map((doc) => ({
-    name: doc.name,
-    teamCount: doc.teamCount,
-    teams: doc.teams.map((team) => ({
-      name: team.name,
-      players: team.players.map((p) => ({
-        id: p._id.toString(),
-        name: p.name ?? "이름미정",
-        backNumber: p.backNumber ?? 0,
-        position: p.position ?? "미정",
-      })),
-    })),
-    createdBy: doc.createdBy.toString(),
-    createdAt: new Date(doc.createdAt),
-    updatedAt: new Date(doc.updatedAt),
-  }));
+export interface TeamSnapshot {
+  id: string;
+  name: string;
+  teamCount: number;
+  teams: {
+    name: string;
+    players: TeamPlayerSnapshot[];
+  }[];
+  createdBy: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 interface LeanTeamSnapshot {
@@ -33,35 +29,74 @@ interface LeanTeamSnapshot {
   teamCount: number;
   teams: {
     name: string;
-    players: LeanPlayer[];
+    players: Array<LeanTeamPlayer | Types.ObjectId | string>;
   }[];
   createdBy: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
-  __v: number;
 }
 
-interface LeanPlayer {
-  _id: Types.ObjectId;
+interface LeanTeamPlayer {
+  id?: string;
   name?: string;
   backNumber?: number;
   position?: string;
+  isGuest?: boolean;
 }
 
-// Player ID만 담고 있음
-export interface TeamSnapshot {
-  name: string;
-  teamCount: number;
-  teams: {
-    name: string;
-    players: {
-      id: string;
-      name: string;
-      backNumber: number;
-      position: string;
-    }[];
-  }[];
-  createdBy: string;
-  createdAt: Date;
-  updatedAt: Date;
+export async function getAllTeams(): Promise<TeamSnapshot[]> {
+  await connectDB();
+  const docs = await TeamSnapshotModel.find()
+    .sort({ createdAt: -1 })
+    .lean<LeanTeamSnapshot[]>();
+
+  return docs.map(normalizeTeamSnapshot);
+}
+
+export async function getTeamById(teamId: string): Promise<TeamSnapshot | null> {
+  if (!Types.ObjectId.isValid(teamId)) return null;
+
+  await connectDB();
+  const doc = await TeamSnapshotModel.findById(teamId).lean<LeanTeamSnapshot | null>();
+  if (!doc) return null;
+
+  return normalizeTeamSnapshot(doc);
+}
+
+function normalizeTeamSnapshot(doc: LeanTeamSnapshot): TeamSnapshot {
+  return {
+    id: doc._id.toString(),
+    name: doc.name,
+    teamCount: doc.teamCount,
+    teams: doc.teams.map((team) => ({
+      name: team.name,
+      players: team.players.map(normalizePlayerSnapshot),
+    })),
+    createdBy: doc.createdBy.toString(),
+    createdAt: new Date(doc.createdAt),
+    updatedAt: new Date(doc.updatedAt),
+  };
+}
+
+function normalizePlayerSnapshot(
+  player: LeanTeamPlayer | Types.ObjectId | string,
+): TeamPlayerSnapshot {
+  if (player instanceof Types.ObjectId || typeof player === "string") {
+    const id = player.toString();
+    return {
+      id,
+      name: "삭제된 회원",
+      backNumber: 0,
+      position: "미정",
+      isGuest: false,
+    };
+  }
+
+  return {
+    id: player.id,
+    name: player.name ?? "이름미정",
+    backNumber: player.backNumber ?? 0,
+    position: player.position ?? "미정",
+    isGuest: player.isGuest ?? false,
+  };
 }

@@ -8,12 +8,14 @@ import { useState } from "react";
 
 interface Props {
   open: boolean;
+  prevName?: string;
   onClose: () => void;
   onSubmit: (name: string) => void;
 }
 
-export function SaveTeamDialog({ open, onClose, onSubmit }: Props) {
+export function SaveTeamDialog({ open, prevName, onClose, onSubmit }: Props) {
   const [teamName, setTeamName] = useState(() => {
+    if (prevName) return prevName;
     return `${formatDateTypeA(new Date())} 유로 정규 경기`;
   });
   return (

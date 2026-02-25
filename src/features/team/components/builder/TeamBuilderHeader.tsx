@@ -4,8 +4,9 @@ import { useAlertModal } from "@/contexts/ModalContext";
 import { RotateCcw, Save, Share } from "lucide-react";
 import { RandomTeamModal } from "./modal/RandomTeamModal";
 import { Button } from "@/components/ui/button";
+import { ButtonGroup } from "@/components/ui/button-group";
 
-export function TeamSquadHeader({
+export function TeamBuilderHeader({
   teamCount,
   isValidTeam,
   onChange,
@@ -43,13 +44,16 @@ export function TeamSquadHeader({
             <ToggleGroupItem value="6">6</ToggleGroupItem>
           </ToggleGroup>
         </div>
+      </div>
+      <ButtonGroup>
         <RandomTeamModal
           teamCount={teamCount}
           onSwapTeam={onSwapTeam}
           onResetTeams={onResetTeams}
         />
-        <button
-          className="hover:bg-muted rounded-lg p-2"
+        <Button
+          variant="outline"
+          className="hover:bg-blue-50 hover:text-blue-600"
           onClick={() => {
             showModal({
               title: "전체 팀 초기화",
@@ -70,27 +74,27 @@ export function TeamSquadHeader({
           }}
         >
           <RotateCcw />
-        </button>
-      </div>
-      <div className="grid grid-cols-2 items-end gap-4">
+          <span className="btn-icon-text">전체 초기화</span>
+        </Button>
         <Button
           variant="outline"
+          className="hover:bg-blue-50 hover:text-blue-600"
           onClick={onShareKakao}
           disabled={!isValidTeam}
         >
           <Share className="h-4 w-4" />
-          카카오톡 공유
+          <span className="btn-icon-text">카카오톡 공유</span>
         </Button>
         <Button
           variant="outline"
-          className="mt-4 flex w-fit items-center gap-1 px-2 py-1 text-sm transition-colors hover:bg-blue-50 hover:text-blue-600"
+          className="hover:bg-blue-50 hover:text-blue-600"
           disabled={!isValidTeam}
           onClick={onOpenEdit}
         >
           <Save className="h-4 w-4" />
-          스쿼드 저장
+          <span className="btn-icon-text">스쿼드 저장</span>
         </Button>
-      </div>
+      </ButtonGroup>
     </div>
   );
 }

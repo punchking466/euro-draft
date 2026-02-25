@@ -28,7 +28,7 @@ type Group = {
   menus: Menu[];
 };
 
-export function getMenuList(pathname: string): Group[] {
+export function getMenuList(): Group[] {
   return [
     {
       groupLabel: "",
@@ -49,13 +49,13 @@ export function getMenuList(pathname: string): Group[] {
           icon: Users,
           submenus: [
             {
-              href: "/team/squad",
-              label: "스쿼드 생성",
+              href: "/team/builder",
+              label: "팀 생성/수정",
               icon: ShieldPlus,
             },
             {
-              href: "/team/drafts",
-              label: "저장된 팀",
+              href: "/team/snapshots",
+              label: "생성된 팀",
               icon: Save,
             },
           ],

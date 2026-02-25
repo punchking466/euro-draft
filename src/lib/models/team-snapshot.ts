@@ -1,8 +1,16 @@
 import mongoose, { Schema, Types, Document } from "mongoose";
 
+interface TeamPlayerSnapshot {
+  id?: string;
+  name: string;
+  backNumber: number;
+  position: string;
+  isGuest: boolean;
+}
+
 interface Team {
   name: string;
-  players: Types.ObjectId[];
+  players: TeamPlayerSnapshot[];
 }
 
 export interface TeamSnapshotDocument extends Document {
@@ -17,7 +25,15 @@ export interface TeamSnapshotDocument extends Document {
 const TeamSchema = new Schema<Team>(
   {
     name: { type: String, required: true },
-    players: [{ type: Schema.Types.ObjectId, ref: "Member" }],
+    players: [
+      {
+        id: { type: String, required: false },
+        name: { type: String, required: true },
+        backNumber: { type: Number, required: true },
+        position: { type: String, required: true },
+        isGuest: { type: Boolean, required: true, default: false },
+      },
+    ],
   },
   { _id: false },
 );

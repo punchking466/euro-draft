@@ -1,13 +1,13 @@
 import { SiteHeader } from "@/components/site-header";
 
-export default function TeamSquadLayout({
+export default function TeamSnapshotsLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
     <>
-      <SiteHeader pageName="스쿼드 생성" />
+      <SiteHeader pageName="저장된 팀" />
       {children}
     </>
   );

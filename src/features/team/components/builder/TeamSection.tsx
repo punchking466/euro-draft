@@ -1,15 +1,15 @@
-import { useUserStore } from "@/store/user/useUserStore";
 import { Sortable } from "@/components/common/dnd/Sortable";
 import { useAlertModal } from "@/contexts/ModalContext";
 import { Plus, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { OpenEditArgs } from "./TeamSquadClient";
+import { OpenEditArgs } from "./TeamBuilderClient";
+import { TeamPlayerItem } from "./hooks/useTeams";
 
 interface Props {
   teamData: {
     teamKey: string;
     teamCount: number;
-    teams: Record<string, string[]>;
+    teams: Record<string, TeamPlayerItem[]>;
   };
   onSwapTeam: (from: string, to: string, target: string) => void;
   onRemoveTeam: (team: string, target: string) => void;
@@ -23,7 +23,6 @@ export function TeamSection({
   onOpenEdit,
 }: Props) {
   const { showModal, hideModal } = useAlertModal();
-  const userMap = useUserStore((state) => state.userMap);
   const { teamKey, teams } = teamData;
 
   return (
@@ -56,8 +55,7 @@ export function TeamSection({
         </button>
       </div>
       <div className="flex flex-wrap gap-2">
-        {(teams[teamKey] ?? []).map((player, index) => {
-          const targetPlayer = userMap.get(player);
+        {(teams[teamKey] ?? []).map((targetPlayer, index) => {
           if (!targetPlayer) return;
 
           return (

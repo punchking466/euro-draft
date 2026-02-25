@@ -13,12 +13,14 @@ import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { handleShareKakao } from "@/lib/KakaoScript";
 import { formatDateTypeB } from "@/utils/dateFormat";
+import Link from "next/link";
 
 interface TeamPlayer {
-  id: string; // resolved from $oid
+  id?: string;
   name: string;
   backNumber: number;
   position: string;
+  isGuest: boolean;
 }
 
 interface Team {
@@ -27,6 +29,7 @@ interface Team {
 }
 
 interface TeamHistoryEntry {
+  id: string;
   name: string;
   createdAt: Date;
   teams: Team[];
@@ -36,7 +39,7 @@ interface Props {
   data: TeamHistoryEntry[];
 }
 
-export function TeamHistoryAccordion({ data }: Props) {
+export function TeamSnapshotsAccordion({ data }: Props) {
   return (
     <Accordion type="multiple" className="space-y-4">
       {data.map((entry, idx) => (
@@ -73,8 +76,10 @@ export function TeamHistoryAccordion({ data }: Props) {
                 >
                   <Share className="h-4 w-4" />
                 </Button>
-                <Button variant="outline">
-                  <Pencil className="h-4 w-4" />
+                <Button asChild variant="outline">
+                  <Link href={`/team/builder?teamId=${entry.id}`}>
+                    <Pencil className="h-4 w-4" />
+                  </Link>
                 </Button>
                 <Button variant="destructive">
                   <Trash2 className="h-4 w-4" />
@@ -95,7 +100,7 @@ export function TeamHistoryAccordion({ data }: Props) {
                     ) : (
                       team.players.map((player) => (
                         <div
-                          key={player.id}
+                          key={player.id ?? `${team.name}:${player.name}:${player.backNumber}`}
                           className="flex items-center justify-between rounded border px-3 py-2"
                         >
                           <div className="space-x-2">

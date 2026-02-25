@@ -8,9 +8,15 @@ export const TeamSchema = z.object({
     .array(
       z.object({
         name: z.string().min(1, "팀 이름은 필수입니다."),
-        players: z
-          .array(z.string().min(1))
-          .min(1, "각 팀에는 최소 1명 이상의 선수가 필요합니다."),
+        players: z.array(
+          z.object({
+            id: z.string().optional(),
+            name: z.string().min(1, "선수 이름은 필수입니다."),
+            backNumber: z.number(),
+            position: z.string().min(1, "포지션은 필수입니다."),
+            isGuest: z.boolean(),
+          }),
+        ),
       }),
     )
     .min(1, "최소 1개 이상의 팀이 필요합니다."),

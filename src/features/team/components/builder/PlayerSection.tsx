@@ -1,23 +1,18 @@
-import { useUserStore } from "@/store/user/useUserStore";
-import { PlayerDto } from "@/features/players/types/Player.type";
 import { Droppable } from "@/components/common/dnd/Droppable";
 import { Sortable } from "@/components/common/dnd/Sortable";
 import { Button } from "@/components/ui/button";
-import { OpenEditArgs } from "./TeamSquadClient";
+import { OpenEditArgs } from "./TeamBuilderClient";
+import { TeamPlayerItem } from "./hooks/useTeams";
 
 interface Props {
-  pool: string[];
+  pool: TeamPlayerItem[];
   onOpenEdit: ({ mode, teamKey, modalId, targetId }: OpenEditArgs) => void;
 }
 
 export function PlayerSection({ pool, onOpenEdit }: Props) {
-  const userMap = useUserStore((state) => state.userMap);
-  const filteredPlayers = [...pool]
-    .map((id) => userMap.get(id))
-    .filter((p): p is PlayerDto => !!p)
-    .sort((a, b) => a.name.localeCompare(b.name, "ko"));
+  const filteredPlayers = [...pool].sort((a, b) => a.name.localeCompare(b.name, "ko"));
 
-  const groupbyPosition = filteredPlayers.reduce<Record<string, PlayerDto[]>>(
+  const groupbyPosition = filteredPlayers.reduce<Record<string, TeamPlayerItem[]>>(
     (acc, player) => {
       const pos = player.position ?? "기타";
       if (!acc[pos]) acc[pos] = [];

@@ -23,7 +23,7 @@ import { getMenuList } from "./menu-data";
 
 export function AppSidebar() {
   const pathname = usePathname();
-  const menuGroups = getMenuList(pathname);
+  const menuGroups = getMenuList();
 
   const isActive = (target: string) => pathname === target;
 
